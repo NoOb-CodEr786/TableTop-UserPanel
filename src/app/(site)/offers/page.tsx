@@ -1,100 +1,52 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Clock, Copy, CheckCircle, Star, Percent, Tag, Gift } from 'lucide-react';
-
-interface Offer {
-  id: number;
-  title: string;
-  description: string;
-  discount: string;
-  code: string;
-  image: string;
-  validUntil: string;
-  minOrder?: number;
-  type: 'percentage' | 'fixed' | 'bogo' | 'free_delivery';
-  isActive: boolean;
-}
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Clock,
+  Copy,
+  Check,
+  Percent,
+  Tag,
+  Gift,
+  Sparkles,
+  TrendingUp,
+  AlertCircle,
+  Loader2,
+  ArrowLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useOffersStore } from "@/store/offersStore";
+import { Offer } from "@/api/offers.api";
 
 export default function OffersPage() {
+  const router = useRouter();
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  const offers: Offer[] = [
-    {
-      id: 1,
-      title: 'Welcome Offer',
-      description: 'Get 20% off on your first order',
-      discount: '20% OFF',
-      code: 'WELCOME20',
-      image: '🎉',
-      validUntil: '2024-12-31',
-      minOrder: 25,
-      type: 'percentage',
-      isActive: true
-    },
-    {
-      id: 2,
-      title: 'Free Delivery',
-      description: 'Free delivery on orders above $30',
-      discount: 'FREE DELIVERY',
-      code: 'FREEDEL30',
-      image: '🚚',
-      validUntil: '2024-11-30',
-      minOrder: 30,
-      type: 'free_delivery',
-      isActive: true
-    },
-    {
-      id: 3,
-      title: 'Weekend Special',
-      description: 'Buy one main course, get one appetizer free',
-      discount: 'BOGO',
-      code: 'WEEKEND2024',
-      image: '🍽️',
-      validUntil: '2024-10-20',
-      type: 'bogo',
-      isActive: true
-    },
-    {
-      id: 4,
-      title: 'Student Discount',
-      description: '$5 off on any order',
-      discount: '$5 OFF',
-      code: 'STUDENT5',
-      image: '🎓',
-      validUntil: '2024-12-25',
-      minOrder: 20,
-      type: 'fixed',
-      isActive: true
-    },
-    {
-      id: 5,
-      title: 'Lunch Special',
-      description: '15% off on lunch orders between 11 AM - 3 PM',
-      discount: '15% OFF',
-      code: 'LUNCH15',
-      image: '🌞',
-      validUntil: '2024-10-15',
-      minOrder: 15,
-      type: 'percentage',
-      isActive: false
-    },
-    {
-      id: 6,
-      title: 'Family Feast',
-      description: '25% off on orders above $60',
-      discount: '25% OFF',
-      code: 'FAMILY25',
-      image: '👨‍👩‍👧‍👦',
-      validUntil: '2024-11-15',
-      minOrder: 60,
-      type: 'percentage',
-      isActive: true
-    }
-  ];
+  const {
+    offers,
+    isLoading,
+    error,
+    setHotelAndBranch,
+    initializeOffersData,
+    fetchAvailableOffers,
+    applyOffer,
+  } = useOffersStore();
 
-  const activeOffers = offers.filter(offer => offer.isActive);
-  const expiredOffers = offers.filter(offer => !offer.isActive);
+  // Initialize with hotel and branch IDs and load data once
+  useEffect(() => {
+    const initializeData = async () => {
+      const hotelId = "HTL-2025-00001";
+      const branchId = "BRN-HTL1001-00001";
+
+      setHotelAndBranch(hotelId, branchId);
+
+      // Load offers data (will only fetch if not already loaded)
+      await initializeOffersData();
+    };
+
+    initializeData();
+  }, [setHotelAndBranch, initializeOffersData]);
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -102,173 +54,344 @@ export default function OffersPage() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
-  const getOfferIcon = (type: Offer['type']) => {
-    switch (type) {
-      case 'percentage':
-        return <Percent className="w-5 h-5" />;
-      case 'fixed':
-        return <Tag className="w-5 h-5" />;
-      case 'bogo':
-        return <Gift className="w-5 h-5" />;
-      case 'free_delivery':
-        return <Tag className="w-5 h-5" />;
-      default:
-        return <Tag className="w-5 h-5" />;
+  const handleApplyOffer = (offer: Offer) => {
+    applyOffer(offer);
+    router.push("/menu");
+  };
+
+  const getDiscountText = (offer: Offer) => {
+    if (offer.discountType === "percent") {
+      return `${offer.discountValue}% OFF`;
     }
+    return `₹${offer.discountValue} OFF`;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+  const calculateSavings = (
+    offer: Offer,
+    orderValue: number = offer.minOrderValue
+  ) => {
+    if (offer.discountType === "percent") {
+      const discount = (orderValue * offer.discountValue) / 100;
+      return Math.min(discount, offer.maxDiscountAmount);
+    }
+    return Math.min(offer.discountValue, offer.maxDiscountAmount);
   };
 
-  const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => (
-    <div className={`bg-white rounded-xl overflow-hidden shadow-lg ${!offer.isActive ? 'opacity-60' : ''}`}>
-      <div className="relative">
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-4xl">{offer.image}</div>
-            <div className="flex items-center space-x-1 text-orange-100">
-              {getOfferIcon(offer.type)}
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+          <div className="px-4 py-4 flex items-center gap-4">
+            <button
+              onClick={() => router.back()}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">
+              Exclusive Offers
+            </h1>
+          </div>
+        </div>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="w-10 h-10 text-theme-primary animate-spin mx-auto mb-3" />
+            <p className="text-gray-600 font-medium">
+              Loading amazing offers...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+          <div className="px-4 py-4 flex items-center gap-4">
+            <button
+              onClick={() => router.back()}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">
+              Exclusive Offers
+            </h1>
+          </div>
+        </div>
+        <div className="flex items-center justify-center min-h-[60vh] p-6">
+          <div className="text-center max-w-md">
+            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-10 h-10 text-red-600" />
             </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Oops! Something went wrong
+            </h3>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <button
+              onClick={() => fetchAvailableOffers()}
+              className="px-5 py-2.5 bg-theme-primary text-white rounded-full text-sm font-semibold hover:bg-theme-primary-dark transition-colors"
+            >
+              Try Again
+            </button>
           </div>
-          <h3 className="text-xl font-bold mb-2">{offer.title}</h3>
-          <p className="text-orange-100 text-sm">{offer.description}</p>
-        </div>
-        
-        {!offer.isActive && (
-          <div className="absolute top-4 right-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-            Expired
-          </div>
-        )}
-      </div>
-
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-2xl font-bold text-orange-600">
-            {offer.discount}
-          </div>
-          <div className="flex items-center space-x-1 text-gray-500">
-            <Clock className="w-4 h-4" />
-            <span className="text-sm">Valid until {formatDate(offer.validUntil)}</span>
-          </div>
-        </div>
-
-        {offer.minOrder && (
-          <p className="text-sm text-gray-600 mb-4">
-            Minimum order: ${offer.minOrder}
-          </p>
-        )}
-
-        <div className="flex items-center space-x-3">
-          <div className="flex-1 bg-gray-100 rounded-lg p-3 font-mono text-center">
-            <span className="text-lg font-bold">{offer.code}</span>
-          </div>
-          <button
-            onClick={() => copyToClipboard(offer.code)}
-            disabled={!offer.isActive}
-            className={`px-4 py-3 rounded-lg font-semibold transition-colors duration-200 ${
-              offer.isActive
-                ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {copiedCode === offer.code ? 'Copied!' : 'Copy'}
-          </button>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Special Offers</h1>
-          <p className="text-gray-600">
-            Save money with our exclusive deals and promotions
-          </p>
-        </div>
-
-        {/* Active Offers */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center space-x-2">
-            <Gift className="w-6 h-6 text-orange-600" />
-            <span>Active Offers</span>
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeOffers.map((offer) => (
-              <OfferCard key={offer.id} offer={offer} />
-            ))}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 pb-20">
+      <div className="pt-20">
+        <div className="px-4 py-4 flex items-center gap-4">
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-gray-900">
+              Exclusive Offers
+            </h1>
+            <p className="text-xs text-gray-500">
+              {offers.length} offers available
+            </p>
           </div>
-
-          {activeOffers.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-xl">
-              <div className="text-6xl mb-4">🎁</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No active offers right now
-              </h3>
-              <p className="text-gray-600">
-                Check back later for exciting deals and promotions!
-              </p>
+          {offers.length > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-theme-gradient rounded-full">
+              <Sparkles className="w-3.5 h-3.5 text-white" />
+              <span className="text-xs font-semibold text-white">
+                Limited Time
+              </span>
             </div>
           )}
         </div>
+      </div>
 
-        {/* Expired Offers */}
-        {expiredOffers.length > 0 && (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center space-x-2">
-              <Clock className="w-6 h-6 text-gray-500" />
-              <span>Recently Expired</span>
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {expiredOffers.map((offer) => (
-                <OfferCard key={offer.id} offer={offer} />
-              ))}
+      <div className="p-4 space-y-4">
+        {offers.length > 0 ? (
+          <>
+            <div className="relative overflow-hidden rounded-xl bg-theme-gradient p-4 shadow-lg">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-3">
+                  <Gift className="w-5 h-5 text-white" />
+                  <span className="text-white/90 text-sm font-medium">
+                    Best Offer
+                  </span>
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Save up to ₹{offers[0].maxDiscountAmount}
+                </h2>
+                <p className="text-white/90 text-sm mb-4">
+                  On orders above ₹{offers[0].minOrderValue}
+                </p>
+                <button
+                  onClick={() => handleApplyOffer(offers[0])}
+                  className="px-5 py-2.5 bg-white text-theme-primary rounded-full font-semibold text-sm hover:bg-gray-50 transition-all shadow-lg flex items-center gap-2"
+                >
+                  Apply Now
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* How to Use Section */}
-        <div className="mt-12 bg-white rounded-xl p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">How to Use Promo Codes</h3>
-          <div className="space-y-3 text-gray-600">
-            <div className="flex items-start space-x-3">
-              <div className="bg-orange-100 rounded-full p-1 mt-1">
-                <span className="text-orange-600 font-bold text-sm">1</span>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    Max Savings
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">
+                  ₹{Math.max(...offers.map((o) => o.maxDiscountAmount))}
+                </p>
               </div>
-              <p>Copy the promo code from the offer card</p>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="bg-orange-100 rounded-full p-1 mt-1">
-                <span className="text-orange-600 font-bold text-sm">2</span>
+
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Tag className="w-3.5 h-3.5 text-theme-secondary" />
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    Active Deals
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">
+                  {offers.length}
+                </p>
               </div>
-              <p>Add items to your cart and proceed to checkout</p>
             </div>
-            <div className="flex items-start space-x-3">
-              <div className="bg-orange-100 rounded-full p-1 mt-1">
-                <span className="text-orange-600 font-bold text-sm">3</span>
+          </>
+        ) : null}
+
+        <div className="space-y-3">
+          <h3 className="text-lg mt-10 font-bold text-gray-900 flex items-center gap-2 px-1">
+            <Sparkles className="w-5 h-5 text-theme-primary" />
+            All Offers
+          </h3>
+
+          {offers.length === 0 ? (
+            <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-100">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Gift className="w-10 h-10 text-gray-400" />
               </div>
-              <p>Enter the promo code in the designated field</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                No offers available
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Check back later for exciting deals!
+              </p>
+              <button
+                onClick={() => router.push("/menu")}
+                className="px-6 py-3 bg-theme-primary text-white rounded-full text-xs font-semibold hover:bg-theme-primary-dark transition-colors"
+              >
+                Explore Menu
+              </button>
             </div>
-            <div className="flex items-start space-x-3">
-              <div className="bg-orange-100 rounded-full p-1 mt-1">
-                <span className="text-orange-600 font-bold text-sm">4</span>
+          ) : (
+            offers.map((offer) => (
+              <div
+                key={offer._id}
+                className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all"
+              >
+                <div className="relative bg-theme-gradient p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-2">
+                        <span className="text-xs font-bold text-white">
+                          {getDiscountText(offer)}
+                        </span>
+                      </div>
+                      <h4 className="text-white font-bold text-lg mb-1 line-clamp-2">
+                        {offer.title}
+                      </h4>
+                      <p className="text-white/80 text-sm line-clamp-2">
+                        {offer.description}
+                      </p>
+                    </div>
+                    <div className="w-13 h-13 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <Gift className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                    <div>
+                      <p className="text-xs text-gray-600 mb-0.5">You Save</p>
+                      <p className="text-xl font-bold text-green-600">
+                        ₹{calculateSavings(offer)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-600 mb-0.5">Min Order</p>
+                      <p className="text-sm font-bold text-gray-900">
+                        ₹{offer.minOrderValue}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-xs">
+                    <div className="flex items-center gap-1.5 text-gray-600">
+                      <Tag className="w-3.5 h-3.5" />
+                      <span>Max: ₹{offer.maxDiscountAmount}</span>
+                    </div>
+                    {offer.validDays && offer.validDays.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-gray-600">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Valid: {offer.validDays.join(", ")}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg"></div>
+                      <div className="relative px-4 py-3 border-2 border-dashed border-theme-primary/30 rounded-lg bg-white/50 backdrop-blur-sm">
+                        <p className="text-xs text-gray-500 mb-1">Promo Code</p>
+                        <p className="text-base font-bold text-theme-primary font-mono tracking-wider">
+                          {offer.code}
+                        </p>
+                      </div>
+                    </div>
+                    {/* <button onClick={() => copyToClipboard(offer.code)} className={`px-4 py-3 rounded-xl font-semibold transition-all shadow-sm min-w-[80px] ${copiedCode === offer.code ? 'bg-green-500 text-white' : 'bg-theme-gradient text-white hover:shadow-lg'}`}>
+                      {copiedCode === offer.code ? <Check className="w-5 h-5 mx-auto" /> : <Copy className="w-5 h-5 mx-auto" />}
+                    </button> */}
+                  </div>
+
+                  {/* <button onClick={() => router.push('/coupons')} className="w-full py-3.5 bg-theme-gradient text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                    Apply Coupon
+                    <ChevronRight className="w-4 h-4" />
+                  </button> */}
+
+                  <div className="pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="font-medium">{offer.hotel.name}</span>
+                      <span>•</span>
+                      <span>{offer.branch.name}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p>Enjoy your discounted meal!</p>
+            ))
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mt-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 bg-theme-secondary-lighter rounded-lg flex items-center justify-center">
+              <AlertCircle className="w-4 h-4 text-theme-secondary" />
             </div>
+            How to Use Offers
+          </h3>
+          <div className="space-y-4">
+            {[
+              {
+                step: 1,
+                title: "Copy the Code",
+                desc: "Tap on copy button to save the promo code",
+              },
+              {
+                step: 2,
+                title: "Add Items to Cart",
+                desc: "Browse menu and add your favorite items",
+              },
+              {
+                step: 3,
+                title: "Apply at Checkout",
+                desc: "Paste the code and enjoy your discount",
+              },
+              {
+                step: 4,
+                title: "Enjoy Your Meal",
+                desc: "Save money and enjoy delicious food",
+              },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="flex gap-4">
+                <div className="w-8 h-8 bg-theme-gradient rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold text-sm">{step}</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-900 mb-1">
+                    {title}
+                  </p>
+                  <p className="text-sm text-gray-600">{desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
+        <div className="bg-gray-100 rounded-xl p-4 border border-gray-100 mb-15">
+          <p className="text-xs text-gray-500 leading-relaxed">
+            * Offers are subject to availability and may vary by location. Terms
+            and conditions apply. Cannot be combined with other offers. Please
+            check minimum order value and validity before applying.
+          </p>
+        </div>
       </div>
-      
     </div>
   );
 }

@@ -170,7 +170,7 @@ export default function OrdersPage() {
             <p className="text-sm text-gray-500">{formatDate(order.date)}</p>
           </div>
           <div className="flex flex-col items-end">
-            <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+            <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
               {getStatusIcon(order.status)}
               <span>{getStatusText(order.status)}</span>
             </div>
@@ -197,7 +197,7 @@ export default function OrdersPage() {
         </div>
 
         {/* Delivery Address */}
-        <div className="flex items-start space-x-2 mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-start space-x-2 mb-4 p-3 bg-gray-50 rounded">
           <MapPin className="w-4 h-4 text-gray-500 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-gray-900">Delivery Address</p>
@@ -243,7 +243,7 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 pt-20">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
@@ -275,7 +275,7 @@ export default function OrdersPage() {
         </div>
 
         {/* Orders List */}
-        <div className="space-y-6">
+        <div className="space-y-6 pb-15">
           {activeTab === 'current' && (
             <>
               {currentOrders.length > 0 ? (

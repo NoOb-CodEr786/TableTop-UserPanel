@@ -18,9 +18,7 @@ interface CartState {
   // API-based cart data
   cart: Cart | null;
   cartSummary: CartSummary | null;
-  checkoutData: Cart | null; // Store checkout API response separately
   isLoading: boolean;
-  isCheckoutLoading: boolean; // Separate loading state for checkout operations
   isCartLoaded: boolean; // Track if cart has been loaded at least once
   isCartPageInitialized: boolean; // Track if cart page has been initialized
   error: string | null;
@@ -41,10 +39,8 @@ interface CartState {
   fetchCartSummary: () => Promise<void>;
   updateCartItemQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeCartItem: (itemId: string) => Promise<void>;
-  clearCart: () => Promise<void>;
   clearCartLocal: () => void; // Clear cart locally without API call
   bulkUpdateCart: (updates: { itemId: string; quantity: number }[]) => Promise<void>;
-  checkout: () => Promise<Cart | null>;
   setCartVisible: (visible: boolean) => void;
   
   // Legacy methods for compatibility
@@ -77,9 +73,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   // API-based cart data
   cart: null,
   cartSummary: null,
-  checkoutData: null,
   isLoading: false,
-  isCheckoutLoading: false,
   isCartLoaded: false,
   isCartPageInitialized: false,
   error: null,
@@ -228,7 +222,8 @@ export const useCartStore = create<CartState>((set, get) => ({
     const { hotelId, branchId } = get();
     if (!hotelId || !branchId) return;
 
-    set({ isLoading: true, error: null });
+    // Don't set global loading state for quantity updates
+    set({ error: null });
     try {
       const response = await cartApi.updateCartItem(itemId, {
         quantity,
@@ -238,14 +233,12 @@ export const useCartStore = create<CartState>((set, get) => ({
       
       set({ 
         cart: response.data, 
-        cartItems: transformCartItems(response.data),
-        isLoading: false 
+        cartItems: transformCartItems(response.data)
       });
       get().fetchCartSummary();
     } catch (error: any) {
       set({ 
-        error: error.response?.data?.message || 'Failed to update item quantity', 
-        isLoading: false 
+        error: error.response?.data?.message || 'Failed to update item quantity'
       });
     }
   },
@@ -271,29 +264,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     } catch (error: any) {
       set({ 
         error: error.response?.data?.message || 'Failed to remove item', 
-        isLoading: false 
-      });
-    }
-  },
-
-  // Clear cart
-  clearCart: async () => {
-    const { hotelId, branchId } = get();
-    if (!hotelId || !branchId) return;
-
-    set({ isLoading: true, error: null });
-    try {
-      await cartApi.clearCart({ hotelId, branchId });
-      set({ 
-        cart: null, 
-        cartItems: [],
-        cartSummary: null, 
-        isLoading: false,
-        isCartPageInitialized: false // Reset initialization flag when cart is cleared
-      });
-    } catch (error: any) {
-      set({ 
-        error: error.response?.data?.message || 'Failed to clear cart', 
         isLoading: false 
       });
     }
@@ -336,27 +306,7 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  // Checkout cart
-  checkout: async () => {
-    const { hotelId, branchId } = get();
-    if (!hotelId || !branchId) return null;
 
-    set({ isCheckoutLoading: true, error: null });
-    try {
-      const response = await cartApi.checkout({ hotelId, branchId });
-      set({ 
-        checkoutData: response.data, // Store checkout data separately
-        isCheckoutLoading: false 
-      });
-      return response.data;
-    } catch (error: any) {
-      set({ 
-        error: error.response?.data?.message || 'Failed to checkout cart', 
-        isCheckoutLoading: false 
-      });
-      return null;
-    }
-  },
 
   // Set cart visibility
   setCartVisible: (visible: boolean) => {

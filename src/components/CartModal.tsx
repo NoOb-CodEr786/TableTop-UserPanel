@@ -52,7 +52,7 @@ const CartModal: React.FC<CartModalProps> = ({ onClose }) => {
                 </div>
                 <button
                   onClick={handleViewCart}
-                  className="text-zinc-100 bg-orange-500 px-6 py-2 rounded-lg font-medium flex items-center gap-2"
+                  className="text-zinc-100 bg-theme-secondary-dark px-6 py-2 rounded-lg font-medium flex items-center gap-2"
                 >
                   View Cart
                   <svg

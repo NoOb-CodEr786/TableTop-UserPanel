@@ -83,16 +83,6 @@ export interface RemoveCartItemRequest {
   branchId: string;
 }
 
-export interface ClearCartRequest {
-  hotelId: string;
-  branchId: string;
-}
-
-export interface CheckoutRequest {
-  hotelId: string;
-  branchId: string;
-}
-
 export interface BulkUpdateCartRequest {
   updates: {
     itemId: string;
@@ -132,18 +122,6 @@ class CartApi {
   // Remove specific item from cart
   async removeCartItem(itemId: string, data: RemoveCartItemRequest): Promise<{ data: Cart; message: string; success: boolean }> {
     const response = await axiosInstance.delete(`${this.baseUrl}/item/${itemId}`, { data });
-    return response.data;
-  }
-
-  // Clear all items from cart
-  async clearCart(data: ClearCartRequest): Promise<{ message: string; success: boolean }> {
-    const response = await axiosInstance.delete(`${this.baseUrl}/clear`, { data });
-    return response.data;
-  }
-
-  // Checkout cart
-  async checkout(data: CheckoutRequest): Promise<{ data: Cart; message: string; success: boolean }> {
-    const response = await axiosInstance.post(`${this.baseUrl}/checkout`, data);
     return response.data;
   }
 

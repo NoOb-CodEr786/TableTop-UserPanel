@@ -176,7 +176,7 @@ export default function CoinsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       
-      <div className="max-w-4xl mx-auto px-4 py-6 pb-20">
+      <div className="max-w-4xl mx-auto px-4 py-6 pt-20">
         {/* Header Section */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">My Coins</h1>
@@ -569,7 +569,7 @@ export default function CoinsPage() {
         )}
 
         {/* Transaction History */}
-        <div className="mb-6">
+        <div className="mb-6 pb-25">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Transaction History</h2>
           <div className="bg-white rounded-xl border border-gray-200">
             {isHistoryLoading ? (

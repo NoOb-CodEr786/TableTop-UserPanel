@@ -92,7 +92,7 @@ const Categories: React.FC<CategoriesProps> = () => {
   }
 
   return (
-    <div className="px-6 py-6">
+    <div className="px-3 py-6">
       <div className="flex gap-4 overflow-x-auto pb-2 pt-4 scrollbar-hide">
         {/* Show All Categories Option */}
         <div 
@@ -104,7 +104,7 @@ const Categories: React.FC<CategoriesProps> = () => {
           </div>
           <div className={`w-28 h-25 rounded-2xl pt-8 pb-2 flex items-end justify-center transition-colors ${
             !homeSelectedCategory
-              ? 'bg-orange-600' 
+              ? 'bg-theme-primary-dark' 
               : 'bg-gray-400 hover:bg-gray-500'
           }`}>
             <span className="text-white font-semibold text-sm text-center px-2">
@@ -127,8 +127,8 @@ const Categories: React.FC<CategoriesProps> = () => {
             />
             <div className={`w-28 h-25 rounded-2xl pt-8 pb-2 flex items-end justify-center transition-colors ${
               homeSelectedCategory === category._id 
-                ? 'bg-orange-600' 
-                : 'bg-orange-500 hover:bg-orange-600'
+                ? 'bg-theme-secondary-dark' 
+                : 'bg-theme-primary-dark hover:bg-theme-secondary-dark'
             }`}>
               <span className="text-white font-semibold text-sm text-center px-2">
                 {category.name}

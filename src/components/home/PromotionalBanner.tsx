@@ -8,7 +8,7 @@ const PromotionalBanner: React.FC<PromotionalBannerProps> = ({
   bannerImage = "/images/banner1.png" 
 }) => {
   return (
-    <div className="px-6 mb-8">
+    <div className="px-3 mb-8">
       <div className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-orange-600 rounded-2xl overflow-hidden shadow-2xl">
         <img
           src={bannerImage}

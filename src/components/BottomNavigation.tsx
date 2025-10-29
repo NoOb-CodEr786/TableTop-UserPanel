@@ -64,7 +64,7 @@ const BottomNavigation = () => {
   const activeTab = getActiveTab();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
+    <div className=" max-w-xl mx-auto fixed bottom-0 left-0 right-0 z-50">
       <div className="relative">
         {/* Curved background */}
         <svg
@@ -75,14 +75,20 @@ const BottomNavigation = () => {
         >
           <path
             d="M0 0 H130 Q140 0 150 10 L160 20 Q170 30 187.5 30 Q205 30 215 20 L225 10 Q235 0 245 0 H375 V80 H0 V0 Z"
-            fill="#1E1A1A"
+            fill="url(#bottomNavGradient)"
           />
+          <defs>
+            <linearGradient id="bottomNavGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#2563eb" />
+              <stop offset="100%" stopColor="#4f46e5" />
+            </linearGradient>
+          </defs>
         </svg>
 
         {/* Floating Center Button (Filter) */}
         <button
           onClick={() => handleTabChange("filter")}
-          className="absolute left-1/2 -translate-x-1/2 -top-10 w-15 h-15 bg-[#1E1A1A] rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-200"
+          className="absolute left-1/2 -translate-x-1/2 -top-10 w-15 h-15 bg-theme-secondary-dark rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform duration-200"
         >
           <Filter className="w-7 h-7 text-white" />
         </button>
@@ -93,7 +99,7 @@ const BottomNavigation = () => {
           <button
             onClick={() => handleTabChange("home")}
             className={`flex flex-col items-center gap-1 transition-all duration-200 ${
-              activeTab === "home" ? "text-white" : "text-[#9B8E8E]"
+              activeTab === "home" ? "text-white" : "text-blue-200"
             }`}
           >
             <Home className="w-6 h-6" />
@@ -104,7 +110,7 @@ const BottomNavigation = () => {
           <button
             onClick={() => handleTabChange("menu")}
             className={`flex flex-col items-center gap-1 transition-all duration-200 ${
-              activeTab === "menu" ? "text-white" : "text-[#9B8E8E]"
+              activeTab === "menu" ? "text-white" : "text-blue-200"
             }`}
           >
             <Menu className="w-6 h-6" />
@@ -115,7 +121,7 @@ const BottomNavigation = () => {
           <button
             onClick={() => handleTabChange("offers")}
             className={`flex flex-col items-center gap-1 transition-all duration-200 ${
-              activeTab === "offers" ? "text-white" : "text-[#9B8E8E]"
+              activeTab === "offers" ? "text-white" : "text-blue-200"
             }`}
           >
             <BadgePercent className="w-6 h-6" />
@@ -127,7 +133,7 @@ const BottomNavigation = () => {
             <button
               onClick={() => handleTabChange("orders")}
               className={`flex flex-col items-center gap-1 transition-all duration-200 ${
-                activeTab === "orders" ? "text-white" : "text-[#9B8E8E]"
+                activeTab === "orders" ? "text-white" : "text-blue-200"
               }`}
             >
               <ShoppingCart className="w-6 h-6" />

@@ -1,31 +1,56 @@
 @import "tailwindcss";
 
 :root {
+  /* Base Colors */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%;
+  --primary: 214 100% 59%; /* Blue-500 */
   --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 95.9%;
+  --secondary: 224 76% 94%; /* Blue-100 */
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
   --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
+  --accent: 239 84% 67%; /* Indigo-400 */
+  --accent-foreground: 0 0% 98%;
   --destructive: 0 72.22% 50.59%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
+  --border: 221 83% 53%; /* Blue-600 */
   --input: 240 5.9% 90%;
-  --ring: 240 5% 64.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
-  --radius: 0.5rem;
+  --ring: 239 84% 67%; /* Indigo-400 */
+  --chart-1: 214 100% 59%; /* Blue-500 */
+  --chart-2: 239 84% 67%; /* Indigo-400 */
+  --chart-3: 262 83% 58%; /* Indigo-600 */
+  --chart-4: 214 100% 59%; /* Blue-500 */
+  --chart-5: 239 84% 67%; /* Indigo-400 */
+  --radius: 0.75rem;
+
+  /* Custom Blue & Indigo Theme Variables */
+  --theme-primary: 214 100% 59%; /* #3b82f6 - Blue-500 */
+  --theme-primary-dark: 221 83% 53%; /* #2563eb - Blue-600 */
+  --theme-primary-darker: 224 76% 48%; /* #1d4ed8 - Blue-700 */
+  --theme-secondary: 239 84% 67%; /* #6366f1 - Indigo-500 */
+  --theme-secondary-dark: 243 75% 59%; /* #4f46e5 - Indigo-600 */
+  --theme-secondary-darker: 244 70% 50%; /* #4338ca - Indigo-700 */
+  
+  /* Light variants */
+  --theme-primary-light: 213 93% 68%; /* #60a5fa - Blue-400 */
+  --theme-primary-lighter: 214 95% 93%; /* #dbeafe - Blue-100 */
+  --theme-secondary-light: 238 94% 77%; /* #818cf8 - Indigo-400 */
+  --theme-secondary-lighter: 244 100% 95%; /* #e0e7ff - Indigo-100 */
+  
+  /* Gradient combinations */
+  --theme-gradient-primary: linear-gradient(135deg, hsl(var(--theme-primary)) 0%, hsl(var(--theme-secondary)) 100%);
+  --theme-gradient-secondary: linear-gradient(135deg, hsl(var(--theme-primary-dark)) 0%, hsl(var(--theme-secondary-darker)) 100%);
+  --theme-gradient-light: linear-gradient(135deg, hsl(var(--theme-primary-light)) 0%, hsl(var(--theme-secondary-light)) 100%);
+  
+  /* Success, Warning, Error with blue tints */
+  --theme-success: 158 64% 52%; /* #10b981 - Emerald-500 */
+  --theme-warning: 45 93% 58%; /* #f59e0b - Amber-500 */
+  --theme-error: 0 84% 60%; /* #ef4444 - Red-500 */
 }
 
 .dark {
@@ -55,9 +80,9 @@
   --chart-5: 340 75% 55%;
 }
 
-* {
+/* * {
   border-color: hsl(var(--border));
-}
+} */
 
 body {
   background-color: hsl(var(--background));
@@ -81,4 +106,172 @@ body {
   100% {
     background-position: 200% 0;
   }
+}
+
+/* Theme Utility Classes */
+.bg-theme-primary {
+  background-color: hsl(var(--theme-primary));
+}
+
+.bg-theme-primary-dark {
+  background-color: hsl(var(--theme-primary-dark));
+}
+
+.bg-theme-secondary {
+  background-color: hsl(var(--theme-secondary));
+}
+
+.bg-theme-secondary-dark {
+  background-color: hsl(var(--theme-secondary-dark));
+}
+
+.bg-theme-success {
+  background-color: hsl(var(--theme-success));
+}
+
+.bg-theme-warning {
+  background-color: hsl(var(--theme-warning));
+}
+
+.bg-theme-error {
+  background-color: hsl(var(--theme-error));
+}
+
+.bg-theme-gradient {
+  background: var(--theme-gradient-primary);
+}
+
+.bg-theme-gradient-secondary {
+  background: var(--theme-gradient-secondary);
+}
+
+.bg-theme-gradient-light {
+  background: var(--theme-gradient-light);
+}
+
+.text-theme-primary {
+  color: hsl(var(--theme-primary));
+}
+
+.text-theme-secondary {
+  color: hsl(var(--theme-secondary));
+}
+
+.text-theme-success {
+  color: hsl(var(--theme-success));
+}
+
+.text-theme-warning {
+  color: hsl(var(--theme-warning));
+}
+
+.text-theme-error {
+  color: hsl(var(--theme-error));
+}
+
+.border-theme-primary {
+  border-color: hsl(var(--theme-primary));
+}
+
+.border-theme-secondary {
+  border-color: hsl(var(--theme-secondary));
+}
+
+.border-theme-success {
+  border-color: hsl(var(--theme-success));
+}
+
+.border-theme-warning {
+  border-color: hsl(var(--theme-warning));
+}
+
+.border-theme-error {
+  border-color: hsl(var(--theme-error));
+}
+
+/* Ring variants */
+.ring-theme-primary {
+  --tw-ring-color: hsl(var(--theme-primary));
+}
+
+.ring-theme-secondary {
+  --tw-ring-color: hsl(var(--theme-secondary));
+}
+
+.focus\:ring-theme-primary:focus {
+  --tw-ring-color: hsl(var(--theme-primary));
+}
+
+.focus\:ring-theme-secondary:focus {
+  --tw-ring-color: hsl(var(--theme-secondary));
+}
+
+.focus\:border-theme-primary:focus {
+  border-color: hsl(var(--theme-primary));
+}
+
+.focus\:border-theme-secondary:focus {
+  border-color: hsl(var(--theme-secondary));
+}
+
+/* Hover variants */
+.hover\:bg-theme-primary-dark:hover {
+  background-color: hsl(var(--theme-primary-dark));
+}
+
+.hover\:bg-theme-secondary-dark:hover {
+  background-color: hsl(var(--theme-secondary-dark));
+}
+
+/* Glass morphism with theme colors */
+.glass-theme-primary {
+  background: hsla(var(--theme-primary), 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsla(var(--theme-primary), 0.2);
+}
+
+.glass-theme-secondary {
+  background: hsla(var(--theme-secondary), 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsla(var(--theme-secondary), 0.2);
+}
+
+/* Button variants */
+.btn-theme-primary {
+  background-color: hsl(var(--theme-primary));
+  color: white;
+  border: 1px solid hsl(var(--theme-primary));
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-theme-primary:hover {
+  background-color: hsl(var(--theme-primary-dark));
+  border-color: hsl(var(--theme-primary-dark));
+  transform: translateY(-1px);
+}
+
+.btn-theme-secondary {
+  background-color: hsl(var(--theme-secondary));
+  color: white;
+  border: 1px solid hsl(var(--theme-secondary));
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-theme-secondary:hover {
+  background-color: hsl(var(--theme-secondary-dark));
+  border-color: hsl(var(--theme-secondary-dark));
+  transform: translateY(-1px);
+}
+
+/* Card variants */
+.card-theme-primary {
+  background: hsla(var(--theme-primary-lighter), 0.5);
+  border: 1px solid hsla(var(--theme-primary), 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.card-theme-secondary {
+  background: hsla(var(--theme-secondary-lighter), 0.5);
+  border: 1px solid hsla(var(--theme-secondary), 0.2);
+  backdrop-filter: blur(8px);
 }

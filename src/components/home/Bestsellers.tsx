@@ -60,7 +60,7 @@ const Bestsellers: React.FC = () => {
   };
 
   return (
-    <div className="px-6 mb-8">
+    <div className="px-3 mb-8">
       <div className="flex items-center justify-center mb-6">
         <div className="flex-1 h-px bg-gray-300"></div>
         <h3 className="px-6 text-3xl font-serif italic text-gray-700">
@@ -146,7 +146,7 @@ const Bestsellers: React.FC = () => {
                             ? "bg-green-50 border-green-500"
                             : item.foodType === "non-veg"
                             ? "bg-red-50 border-red-500"
-                            : "bg-blue-50 border-blue-500"
+                            : "bg-gray-50 border-gray-500"
                         }`}
                       >
                         <div
@@ -155,7 +155,7 @@ const Bestsellers: React.FC = () => {
                               ? "bg-green-500"
                               : item.foodType === "non-veg"
                               ? "bg-red-500"
-                              : "bg-blue-500"
+                              : "bg-gray-500"
                           }`}
                         ></div>
                       </div>
@@ -207,7 +207,7 @@ const Bestsellers: React.FC = () => {
                       
                       if (isInCart) {
                         return (
-                          <div className="font-bold px-6 py-1.5 rounded-lg text-sm bg-green-500 text-white flex items-center gap-2">
+                          <div className="font-medium px-3 py-1 rounded-lg text-[10px] bg-green-500 text-white flex items-center gap-1">
                             <span>Added</span>
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -219,7 +219,7 @@ const Bestsellers: React.FC = () => {
                       return (
                         <button
                           onClick={() => handleAddToCart(item)}
-                          className="font-bold px-6 py-1.5 rounded-lg text-sm bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition-colors"
+                          className="font-medium px-6 py-1.5 rounded-lg text-[10px] bg-white border-1 border-gray-200 text-gray-500 hover:bg-gray-500 hover:text-white transition-colors"
                         >
                           Add
                         </button>

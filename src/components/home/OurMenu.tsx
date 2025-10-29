@@ -70,7 +70,7 @@ const OurMenu: React.FC<OurMenuProps> = () => {
   const displayItems = getHomeDisplayItems();
 
   return (
-    <div id="our-menu-section" className="px-6 mb-8 bg-gray-50 pb-24">
+    <div id="our-menu-section" className="px-3 mb-8 bg-gray-50 pb-24">
 
       
       <div className="flex items-center justify-center mb-6">
@@ -87,7 +87,7 @@ const OurMenu: React.FC<OurMenuProps> = () => {
           onClick={() => handleCategorySelect(null)}
             className={`pb-3 font-semibold whitespace-nowrap transition-colors text-sm sm:text-base ${
             !homeSelectedCategory
-              ? 'text-gray-900 border-b-2 border-orange-500'
+              ? 'text-gray-900 border-b-2 border-indigo-600'
               : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -108,7 +108,7 @@ const OurMenu: React.FC<OurMenuProps> = () => {
               onClick={() => handleCategorySelect(category._id)}
               className={`pb-3 font-semibold whitespace-nowrap transition-colors text-sm sm:text-base ${
                 homeSelectedCategory === category._id
-                  ? 'text-gray-900 border-b-2 border-orange-500'
+                  ? 'text-gray-900 border-b-2 border-indigo-500'
                   : 'text-gray-400 hover:text-gray-600'
               }`}
             >
@@ -220,7 +220,7 @@ const OurMenu: React.FC<OurMenuProps> = () => {
               >
                 <div className="flex gap-4 p-3">
                   {/* Image */}
-                  <div className="w-30 h-30 flex-shrink-0 rounded-xl overflow-hidden relative">
+                  <div className="w-27 h-27 flex-shrink-0 rounded-xl overflow-hidden relative">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -318,7 +318,7 @@ const OurMenu: React.FC<OurMenuProps> = () => {
                         
                         if (isInCart) {
                           return (
-                            <div className="font-bold px-6 py-1.5 rounded-lg text-sm bg-green-500 text-white flex items-center gap-2">
+                            <div className="font-medium px-3 py-1.5 rounded-lg text-sm bg-green-500 text-white flex items-center gap-1">
                               <span>Added</span>
                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -330,7 +330,7 @@ const OurMenu: React.FC<OurMenuProps> = () => {
                         return (
                           <button 
                             onClick={() => handleAddToCart(item)}
-                            className="font-bold px-6 py-1.5 rounded-lg text-sm bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition-colors"
+                            className="font-medium px-6 py-1.5 rounded-lg text-sm bg-white border-2 border-gray-200 text-gray-500 hover:bg-gray-500 hover:text-white transition-colors"
                           >
                             Add
                           </button>
